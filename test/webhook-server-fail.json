@@ -1,0 +1,7 @@
+{
+  "port": [ null, "string", -34, 100000, 5000 ],
+  "host": [ null, "junk", "https://something" ],
+  "key": [ null, "", "trello-api-key" ],
+  "token": [ null, "", "trello-api-token" ],
+  "secret": [ null, "", "trello-api-secret" ]
+}
