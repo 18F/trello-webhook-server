@@ -1,6 +1,6 @@
 {
   "name": "@18f/trello-webhook-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Trello webhook server",
   "main": "bin/webhook-server.js",
   "keywords": [
@@ -12,7 +12,9 @@
     "type": "git",
     "url": "https://github.com/18F/trello-webhook-server.git"
   },
-  "files": [ "bin" ],
+  "files": [
+    "bin"
+  ],
   "license": "CC0-1.0",
   "scripts": {
     "build": "mkdir -p bin && babel --presets es2015 -d bin src",
