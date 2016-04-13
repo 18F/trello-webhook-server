@@ -34,6 +34,7 @@ class TrelloWebhookServer {
     this._hostname = host;
     this._trello = new Trello(apiKey, apiToken);
     this._clientSecret = clientSecret;
+    this._handlers = handlers;
   }
 
   cleanup() {
@@ -126,6 +127,8 @@ class TrelloWebhookServer {
           res.end();
 
           trelloEvent = JSON.parse(trelloEvent);
+          console.log(handlers);
+          console.log(handlers[this._idModel]);
           for (const handler of handlers[this._idModel].data) {
             handler(trelloEvent);
           }

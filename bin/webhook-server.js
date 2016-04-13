@@ -40,6 +40,7 @@ var TrelloWebhookServer = function () {
     this._hostname = host;
     this._trello = new Trello(apiKey, apiToken);
     this._clientSecret = clientSecret;
+    this._handlers = handlers;
   }
 
   _createClass(TrelloWebhookServer, [{
@@ -145,6 +146,8 @@ var TrelloWebhookServer = function () {
               res.end();
 
               trelloEvent = JSON.parse(trelloEvent);
+              console.log(handlers);
+              console.log(handlers[_this3._idModel]);
               var _iteratorNormalCompletion = true;
               var _didIteratorError = false;
               var _iteratorError = undefined;
