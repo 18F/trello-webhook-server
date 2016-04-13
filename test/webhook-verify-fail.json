@@ -1,0 +1,6 @@
+{
+  "callbackURL": [ null, 10, true, "junk", "https://something" ],
+  "clientSecret": [ null, 10, true, "junk", "client-secret" ],
+  "data": [ null, 10, true, "junk", "{ \"some\": \"data\", \"value\": 3 }" ],
+  "signature": [ null, 10, true, "junk", "/qKoB9Rf4446ZFqRNhV5uDojdas=" ]
+}
