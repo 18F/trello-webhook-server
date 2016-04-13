@@ -1,17 +1,22 @@
 {
-  "name": "trello-webhook-server",
+  "name": "@18f/trello-webhook-server",
   "version": "1.0.0",
   "description": "A Trello webhook server",
-  "main": "main.js",
+  "main": "bin/webhook-server.js",
   "keywords": [
     "trello",
     "webhook"
   ],
   "author": "Greg Walker <michael.walker@gsa.gov>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/18F/trello-webhook-server.git"
+  },
+  "files": [ "bin" ],
   "license": "CC0-1.0",
   "scripts": {
     "build": "mkdir -p bin && babel --presets es2015 -d bin src",
-    "test": "npm run lint && LOG_LEVEL=100 tap -Rspec --cov test/test-*.js",
+    "test": "npm run lint && tap -Rspec --cov test/test-*.js",
     "lint": "eslint --fix src/**/*.js"
   },
   "engines": {
