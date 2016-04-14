@@ -21,7 +21,7 @@ To create an instance of the webhook server:
 ```
 var TrelloWebhookServer = require('@18f/trello-webhook-server');
 var server = new TrelloWebhookServer(
-  PORT,
+  PORT || http.Server,
   HOST,
   TRELLO_API_KEY,
   TRELLO_API_TOKEN,
@@ -33,7 +33,7 @@ These five arguments setup the server.
 
 Argument             | Description
 -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PORT                 | The port that the webhook server will listen on.
+PORT or http.Server  | The port that the webhook server will listen on, or an http.Server instance that the webhook server should attach to.  If using an http.Server instance, it should already be listening before calling `server.start()`.
 HOST                 | The URL that will eventually reach the webhook server.  This should be a full HTTP URL that is reachable by Trello.  E.g., https://fdsa.localtunnel.me
 TRELLO_API_KEY       | Obtained from [Trello](https://trello.com/app-key). Located near the top of that page.
 TRELLO_API_TOKEN     | Obtained from [Trello](https://trello.com/app-key). Located near the bottom of that page.
@@ -41,7 +41,7 @@ TRELLO_CLIENT_SECRET | Obtained from [Trello](https://trello.com/app-key). There
 
 ### Getting it started
 
-The webhook listener doesn't register itself with Trello until you pick a model to listen to.  To do that, call the `start` method with the ID of the thing you want notifications for.
+The webhook listener doesn't register itself with Trello until you pick a model to listen to.  To do that, call the `start` method with the ID of the thing you want notifications for.  If you already have an http.Server object and passed that into the constructor, make sure it is listening before you call `start`.
 
 ```
 server.start('trello-model-id');

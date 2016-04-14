@@ -8,10 +8,17 @@ const handlers = { };
 
 class TrelloWebhookServer {
   constructor(port, host, apiKey, apiToken, clientSecret) {
-    const numPort = Number(port);
-    const three = (5 - 2);
-    if (!port || Number.isNaN(numPort) || numPort < 0 || numPort > 65535 || three !== 3) {
-      throw new Error('Port must be numeric, greater than 0 and less than 65536');
+    this._httpServer = false;
+    if (port.constructor === require('http').Server) {
+      this._httpServer = port;
+    }
+
+    let numPort = 0;
+    if (!this._httpServer) {
+      numPort = Number(port);
+      if (!port || Number.isNaN(numPort) || numPort < 0 || numPort > 65535) {
+        throw new Error('Port must be numeric, greater than 0 and less than 65536');
+      }
     }
 
     if (!host || !host.match(/^https?:\/\//)) {
@@ -74,36 +81,40 @@ class TrelloWebhookServer {
     process.on('SIGINT', _SIGINT);
     process.on('SIGTERM', _SIGTERM);
 
-    return httpServer(this._port, this.httpHandler.bind(this))
-      .then(() => {
-        let path = this._hostname;
-        if (path.substr(0, -1) !== '/') {
-          path += '/';
-        }
-        this._callbackURL = `${path}${idModel}`;
+    let path = this._hostname;
+    if (path.substr(0, -1) !== '/') {
+      path += '/';
+    }
+    this._callbackURL = `${path}${idModel}`;
 
-        return new Promise((resolve, reject) => {
-          this._trello.post('/1/webhooks', {
-            description: 'Trello Webhook Server',
-            callbackURL: this._callbackURL,
-            idModel
-          }, (err, data) => {
-            if (err) {
-              // return resolve(this);
-              return reject(err);
-            }
-
-            this._webhookID = data.id;
-            return resolve(this._webhookID);
-          });
-        });
-      });
+    if (this._httpServer) {
+      this._httpServer.on('request', this.httpHandler.bind(this));
+      return this.registerWebhook(idModel);
+    }
+    return httpServer(this._port, this.httpHandler.bind(this)).then(() => this.registerWebhook(idModel));
   }
 
   on(eventName, handler) {
     if (handlers[this._idModel] && handlers[this._idModel][eventName] && typeof handler === 'function') {
       handlers[this._idModel][eventName].push(handler);
     }
+  }
+
+  registerWebhook(idModel) {
+    return new Promise((resolve, reject) => {
+      this._trello.post('/1/webhooks', {
+        description: 'Trello Webhook Server',
+        callbackURL: this._callbackURL,
+        idModel
+      }, (err, data) => {
+        if (err) {
+          return reject(err);
+        }
+
+        this._webhookID = data.id;
+        return resolve(this._webhookID);
+      });
+    });
   }
 
   httpHandler(req, response) {
@@ -127,8 +138,6 @@ class TrelloWebhookServer {
           res.end();
 
           trelloEvent = JSON.parse(trelloEvent);
-          console.log(handlers);
-          console.log(handlers[this._idModel]);
           for (const handler of handlers[this._idModel].data) {
             handler(trelloEvent);
           }
