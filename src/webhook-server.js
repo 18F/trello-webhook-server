@@ -3,16 +3,6 @@
 const WebhookRegistrar = require('./register-webhook');
 const handlers = { };
 
-function getOwnServerSetup(tws) {
-  const that = tws;
-  return function setup(modelID) {
-    that.config.modelID = modelID;
-    handlers[modelID] = {
-      data: []
-    };
-  };
-}
-
 class TrelloWebhookServer {
   constructor(config) { // port, host, apiKey, apiToken, clientSecret) {
     if (!config) {
@@ -38,7 +28,7 @@ class TrelloWebhookServer {
         throw new Error('Port (config.port) must be numeric, greater than 0 and less than 65536');
       }
       this.config.port = numPort;
-      this.start = getOwnServerSetup(this);
+      this.start = require('./get-own-server-setup')(this, handlers);
     }
 
     if (!config.hostURL || !config.hostURL.match(/^https?:\/\//)) {
