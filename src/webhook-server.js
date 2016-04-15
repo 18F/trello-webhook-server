@@ -3,17 +3,6 @@
 const WebhookRegistrar = require('./register-webhook');
 const handlers = { };
 
-function getHTTPServerSetup(tws, server) {
-  const that = tws;
-  return function setup(modelID) {
-    that.config.modelID = modelID;
-    server(); // placeholder
-    handlers[modelID] = {
-      data: []
-    };
-  };
-}
-
 function getOwnServerSetup(tws) {
   const that = tws;
   return function setup(modelID) {
@@ -37,7 +26,7 @@ class TrelloWebhookServer {
           this.start = require('./get-express-server-setup')(this, handlers);
         } else {
           this.config.server = config.server;
-          this.start = getHTTPServerSetup(this, this.config.server);
+          this.start = require('./get-http-server-setup')(this, handlers);
         }
       } else {
         throw new Error('Server (config.server) must be an Express/Restify-style server or an Http.Server');
