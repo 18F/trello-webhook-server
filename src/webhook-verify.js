@@ -1,5 +1,6 @@
 'use strict';
 const crypto = require('crypto');
+const log = require('./error-log');
 
 function verifyTrelloWebhookRequest(callbackURL, clientSecret, body, signature) {
   // Double-HMAC to blind any timing channel attacks
@@ -11,8 +12,8 @@ function verifyTrelloWebhookRequest(callbackURL, clientSecret, body, signature) 
     const headerHash = base64Digest(signature);
     return doubleHash === headerHash;
   } catch (e) {
-    console.error('--- trello-webhook-server: verifying Trello webhook request, caught exception:');
-    console.error(e);
+    log('Verifying Trello webhook request, caught exception:');
+    log(e);
     return false;
   }
 }
