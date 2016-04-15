@@ -7,27 +7,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var WebhookRegistrar = require('./register-webhook');
 var handlers = {};
 
-function getHTTPServerSetup(tws, server) {
-  var that = tws;
-  return function setup(modelID) {
-    that.config.modelID = modelID;
-    server(); // placeholder
-    handlers[modelID] = {
-      data: []
-    };
-  };
-}
-
-function getOwnServerSetup(tws) {
-  var that = tws;
-  return function setup(modelID) {
-    that.config.modelID = modelID;
-    handlers[modelID] = {
-      data: []
-    };
-  };
-}
-
 var TrelloWebhookServer = function () {
   function TrelloWebhookServer(config) {
     _classCallCheck(this, TrelloWebhookServer);
@@ -41,10 +20,10 @@ var TrelloWebhookServer = function () {
       if (config.server.constructor.name === 'Server') {
         if (config.server.use) {
           this.config.server = config.server;
-          this.start = require('./get-express-server-setup')(this, this.config.server, handlers);
+          this.start = require('./get-express-server-setup')(this, handlers);
         } else {
           this.config.server = config.server;
-          this.start = getHTTPServerSetup(this, this.config.server);
+          this.start = require('./get-http-server-setup')(this, handlers);
         }
       } else {
         throw new Error('Server (config.server) must be an Express/Restify-style server or an Http.Server');
@@ -56,7 +35,7 @@ var TrelloWebhookServer = function () {
         throw new Error('Port (config.port) must be numeric, greater than 0 and less than 65536');
       }
       this.config.port = numPort;
-      this.start = getOwnServerSetup(this);
+      this.start = require('./get-own-server-setup')(this, handlers);
     }
 
     if (!config.hostURL || !config.hostURL.match(/^https?:\/\//)) {
