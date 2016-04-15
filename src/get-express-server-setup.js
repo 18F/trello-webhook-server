@@ -3,7 +3,7 @@
 const getHTTPHandler = require('./http-handler');
 const setupSIG = require('./setup-sigint-sigterm');
 
-module.exports = function getExpressServerSetup(tws, server, handlers) {
+module.exports = function getExpressServerSetup(tws, handlers) {
   const that = tws;
   return function setup(modelID) {
     that.config.modelID = modelID;
@@ -15,7 +15,7 @@ module.exports = function getExpressServerSetup(tws, server, handlers) {
     that.config.callbackURL = `${path}${modelID}`;
     path = that.config.callbackURL.match(/https?:\/\/[^\/]+(\/.*)/)[1];
 
-    const httpHandler = getHTTPHandler(tws, handlers);
+    const httpHandler = getHTTPHandler(that, handlers);
 
     const realHandler = function realHandler(req, res, next) {
       httpHandler(req, res);
