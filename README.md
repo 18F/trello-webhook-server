@@ -4,6 +4,8 @@
 
 Creates a Trello webhook server that masks most of the (admittedly modest) complexity, so you can just do you what you want to do.  For more details about Trello webhooks, see the [Trello webhook API documentation](https://developers.trello.com/apis/webhooks).
 
+In addition to offering a standalone mode, where the module creates its own HTTP server, can also attach to an existing http.server or Express/restify-style server.
+
 ## Installing
 
 From npm:
@@ -20,24 +22,21 @@ To create an instance of the webhook server:
 
 ```
 var TrelloWebhookServer = require('@18f/trello-webhook-server');
-var server = new TrelloWebhookServer(
-  PORT || http.Server,
-  HOST,
-  TRELLO_API_KEY,
-  TRELLO_API_TOKEN,
-  TRELLO_CLIENT_SECRET
-);
+var server = new TrelloWebhookServer(config);
 ```
 
-These five arguments setup the server.
+The config parameter has the following properties:
 
-Argument             | Description
--------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PORT or http.Server  | The port that the webhook server will listen on, or an http.Server instance that the webhook server should attach to.  If using an http.Server instance, it should already be listening before calling `server.start()`.
-HOST                 | The URL that will eventually reach the webhook server.  This should be a full HTTP URL that is reachable by Trello.  E.g., https://fdsa.localtunnel.me
-TRELLO_API_KEY       | Obtained from [Trello](https://trello.com/app-key). Located near the top of that page.
-TRELLO_API_TOKEN     | Obtained from [Trello](https://trello.com/app-key). Located near the bottom of that page.
-TRELLO_CLIENT_SECRET | Obtained from [Trello](https://trello.com/app-key). There's a link to generate the key at the end of the first paragraph headed "Token."  This is used to verify that webhook requests are actually from Trello (see the "Webhook Signatures" section on the [Trello webhook API documentation](https://developers.trello.com/apis/webhooks)).
+Argument     | Description
+------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+port         | The port that the webhook server will listen on.  **REQUIRED** if the server property is not set.  Must be numeric (or can be made numeric) and be a valid valid.
+server       | An `http.Server` or Express/restify server to attach to.  Must be an `http.Server` or Express/restify server object.
+hostURL      | **REQUIRED** The URL that will eventually reach the webhook server.  This should be a full HTTP URL that is reachable by Trello.  E.g., https://asdf.localtunnel.me.  If attaching to an existing `http.Server` or Express/restify server, the webhook server will _only_ listen to its assigned path - that is, if you specify `https://asdf.localtunnel.me/trello-webhook`, this module will only listen to events at that path.
+apiKey       | **REQUIRED**  Obtained from [Trello](https://trello.com/app-key). Located near the top of that page.
+apiToken     | **REQUIRED** Obtained from [Trello](https://trello.com/app-key). Located near the bottom of that page.
+clientSecret | **REQUIRED** Obtained from [Trello](https://trello.com/app-key). There's a link to generate the key at the end of the first paragraph headed "Token."  This is used to verify that webhook requests are actually from Trello (see the "Webhook Signatures" section on the [Trello webhook API documentation](https://developers.trello.com/apis/webhooks)).
+
+Any invalid config parameters will throw an exception.
 
 ### Getting it started
 
@@ -51,7 +50,7 @@ This will return a promise that eventually resolves with the Trello webhook ID i
 
 > **NOTE:** It would be a good idea to print the webook ID somewhere you can see it.  If something goes haywire, you may need to manually delete it.  This can be accomplished with a `DELETE` request to <https://api.trello.com/1/webhooks/your-webhook-id/>.
 
-There's some hand-wavy magic happening inside the `start` method: it hooks itself to the process `SIGINT` and `SIGTERM` events.  When it receives either of those, it unregisters itself from Trello and then resends the event.  You can manually initiate this process by calling `server.cleanup()`, but that's not recommended at this time because `cleanup()` doesn't yet do any cleanup besides unregistered the webook - the HTTP server is still running, etc.
+There's some hand-wavy magic happening inside the `start` method: it hooks itself to the process `SIGINT` and `SIGTERM` events.  When it receives either of those, it unregisters itself from Trello and then resends the event.  You can manually initiate this process by calling `server.cleanup()`, but that's not recommended at this time because `cleanup()` doesn't yet do any cleanup besides unregistering the webook - the HTTP server is still running, etc.
 
 ### Getting events
 
@@ -64,6 +63,10 @@ server.on('data', function(event) {
 ```
 
 See the "Trigger Webhooks" section of the [Trello webhook API documentation](https://developers.trello.com/apis/webhooks) for more information about what these event objects look like.
+
+### Demos
+
+Check the `/demo` directory of this repository for samples of how to get going.  Note that in order to run the demos, you will need to manually install [dotenv](https://www.npmjs.com/package/dotenv) and [restify](https://www.npmjs.com/package/restify) as they are not dependencies of this project.  Using `dotenv` allows you to put your environment variables in a `.env` file and have them loaded into your `process.environment` at runtime.
 
 ## Public domain
 
