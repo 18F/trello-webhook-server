@@ -17,6 +17,7 @@ module.exports = function getHandler(tws, handlers) {
           if (!verifyTrelloWebhookRequest(tws.config.callbackURL, tws.config.clientSecret, trelloEvent, req.headers['x-trello-webhook'] || '')) {
             res.statusCode = 400;
             res.end();
+            log('Invalid Trello signature');
             return;
           }
 
