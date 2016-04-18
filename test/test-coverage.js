@@ -11,3 +11,5 @@ for(const file of files) {
     require('../bin/' + file);
   }
 }
+
+require('tap').pass('Full coverage checked');
