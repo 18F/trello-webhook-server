@@ -7,7 +7,7 @@ var log = require('./error-log');
 
 module.exports = function getHandler(tws, handlers) {
   if ((typeof handlers === 'undefined' ? 'undefined' : _typeof(handlers)) !== 'object') {
-    handlers = {};
+    handlers = {}; // eslint-disable-line no-param-reassign
   }
 
   return function httpHandler(req, response) {
@@ -37,9 +37,6 @@ module.exports = function getHandler(tws, handlers) {
                 return h(trelloEvent);
               });
             }
-            // for(const handler of handlers[tws.config.modelID].data) {
-            //  handler(trelloEvent);
-            // }
 
             res.statusCode = 200;
             res.end();
