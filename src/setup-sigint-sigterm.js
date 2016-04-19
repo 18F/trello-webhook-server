@@ -1,30 +1,22 @@
 const log = require('./error-log');
 
+function getHandler(signal, registrar) {
+  const fn = () => {
+    const callback = () => {
+      process.removeListener(signal, fn);
+      process.kill(process.pid, signal);
+    };
+
+    registrar.unregister().then(callback).catch(() => {
+      log('Failed to unregister webhook');
+      callback();
+    });
+  };
+
+  return process.on(signal, fn);
+}
+
 module.exports = function setupProcessEndHandlers(registrar) {
-  const _SIGINT = () => {
-    const callback = () => {
-      process.removeListener('SIGINT', _SIGINT);
-      process.kill(process.pid, 'SIGINT');
-    };
-
-    registrar.unregister().then(callback).catch(() => {
-      log('Failed to unregister webhook');
-      callback();
-    });
-  };
-
-  const _SIGTERM = () => {
-    const callback = () => {
-      process.removeListener('SIGTERM', _SIGTERM);
-      process.kill(process.pid, 'SIGTERM');
-    };
-
-    registrar.unregister().then(callback).catch(() => {
-      log('Failed to unregister webhook');
-      callback();
-    });
-  };
-
-  process.on('SIGINT', _SIGINT);
-  process.on('SIGTERM', _SIGTERM);
+  getHandler('SIGINT', registrar);
+  getHandler('SIGTERM', registrar);
 };
