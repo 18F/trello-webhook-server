@@ -32,7 +32,7 @@ class WebhookRegistrar {
           }
         });
       } else {
-        resolve();
+        resolve(this.webhookID);
       }
     });
   }

@@ -2,31 +2,23 @@
 
 var log = require('./error-log');
 
+function getHandler(signal, registrar) {
+  var fn = function fn() {
+    var callback = function callback() {
+      process.removeListener(signal, fn);
+      process.kill(process.pid, signal);
+    };
+
+    registrar.unregister().then(callback).catch(function () {
+      log('Failed to unregister webhook');
+      callback();
+    });
+  };
+
+  return process.on(signal, fn);
+}
+
 module.exports = function setupProcessEndHandlers(registrar) {
-  var _SIGINT = function _SIGINT() {
-    var callback = function callback() {
-      process.removeListener('SIGINT', _SIGINT);
-      process.kill(process.pid, 'SIGINT');
-    };
-
-    registrar.unregister().then(callback).catch(function () {
-      log('Failed to unregister webhook');
-      callback();
-    });
-  };
-
-  var _SIGTERM = function _SIGTERM() {
-    var callback = function callback() {
-      process.removeListener('SIGTERM', _SIGTERM);
-      process.kill(process.pid, 'SIGTERM');
-    };
-
-    registrar.unregister().then(callback).catch(function () {
-      log('Failed to unregister webhook');
-      callback();
-    });
-  };
-
-  process.on('SIGINT', _SIGINT);
-  process.on('SIGTERM', _SIGTERM);
+  getHandler('SIGINT', registrar);
+  getHandler('SIGTERM', registrar);
 };
