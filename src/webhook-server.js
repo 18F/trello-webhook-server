@@ -9,15 +9,16 @@ class TrelloWebhookServer {
       throw new Error('Config is required');
     }
     this.config = { };
+    let serverSetupModule = './get-own-server-setup';
+
     if (config.server) {
       if (config.server.constructor && config.server.constructor.name === 'Server') {
         if (config.server.use) {
-          this.config.server = config.server;
-          this.start = require('./get-express-server-setup')(this, handlers);
+          serverSetupModule = './get-express-server-setup';
         } else {
-          this.config.server = config.server;
-          this.start = require('./get-http-server-setup')(this, handlers);
+          serverSetupModule = './get-http-server-setup';
         }
+        this.config.server = config.server;
       } else {
         throw new Error('Server (config.server) must be an Express/Restify-style server or an Http.Server');
       }
@@ -28,8 +29,8 @@ class TrelloWebhookServer {
         throw new Error('Port (config.port) must be numeric, greater than 0 and less than 65536');
       }
       this.config.port = numPort;
-      this.start = require('./get-own-server-setup')(this, handlers);
     }
+    this.start = require(serverSetupModule)(this, handlers);
 
     if (!config.hostURL || !config.hostURL.match(/^https?:\/\//)) {
       throw new Error('Host URL (config.hostURL) must be specified and must begin with http:// or https://');
