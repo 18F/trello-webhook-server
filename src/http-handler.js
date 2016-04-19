@@ -3,6 +3,10 @@ const verifyTrelloWebhookRequest = require('./webhook-verify');
 const log = require('./error-log');
 
 module.exports = function getHandler(tws, handlers) {
+  if (typeof handlers !== 'object') {
+    handlers = { }; // eslint-disable-line no-param-reassign
+  }
+
   return function httpHandler(req, response) {
     const res = response;
     if (req.method.toLowerCase() === 'head') {
@@ -21,13 +25,13 @@ module.exports = function getHandler(tws, handlers) {
             return;
           }
 
+          trelloEvent = JSON.parse(trelloEvent);
+          if (handlers[tws.config.modelID] && Array.isArray(handlers[tws.config.modelID].data)) {
+            handlers[tws.config.modelID].data.forEach(h => h(trelloEvent));
+          }
+
           res.statusCode = 200;
           res.end();
-
-          trelloEvent = JSON.parse(trelloEvent);
-          for (const handler of handlers[tws.config.modelID].data) {
-            handler(trelloEvent);
-          }
         } catch (e) {
           log('--- trello-webhook-server: received HTTP event, caught exception:');
           log(e);
@@ -36,7 +40,7 @@ module.exports = function getHandler(tws, handlers) {
         }
       });
     } else {
-      if (!tws._httpServer) {
+      if (!tws.config.server) {
         res.statusCode = 400;
         res.end();
       }
