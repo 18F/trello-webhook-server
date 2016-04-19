@@ -1,5 +1,7 @@
 'use strict';
 
+console.error = () => { }; // eslint-disable-line no-console
+
 const tap = require('tap');
 const sinon = require('sinon');
 const mockRequire = require('mock-require');
@@ -27,7 +29,7 @@ const tws = {
   registrar: {
     register: sandbox.spy()
   }
-}
+};
 
 const express = require('../bin/get-http-server-setup');
 
@@ -45,7 +47,7 @@ tap.test('Get HTTP server setup', t1 => {
     t2.test('HTTP handlers', t3 => {
       t3.equal(getHTTPHandler.callCount, 1, 'gets HTTP handlers');
       t3.equal(tws.config.server.on.callCount, 1, 'sets up an HTTP event handler');
-      t3.equal(tws.config.server.on.args[0][0], 'request', 'registers for HTTP request events')
+      t3.equal(tws.config.server.on.args[0][0], 'request', 'registers for HTTP request events');
       t3.equal(typeof tws.config.server.on.args[0][1], 'function', 'request handler is a function');
       t3.done();
     });
@@ -60,10 +62,10 @@ tap.test('Get HTTP server setup', t1 => {
     });
     t2.test('ignores incoming requests on other paths', t3 => {
       httpHandler.reset();
-      requestHandler({ url: `/wrong/path` }, null);
+      requestHandler({ url: '/wrong/path' }, null);
       t3.equal(httpHandler.callCount, 0, 'did not call the HTTP handler');
       t3.done();
-    })
+    });
 
     t2.done();
   });

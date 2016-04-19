@@ -1,9 +1,11 @@
 'use strict';
 
+console.error = () => { }; // eslint-disable-line no-console
+
 const tap = require('tap');
 const sinon = require('sinon');
 const request = require('request');
-const registrar = require('../bin/register-webhook');
+const Registrar = require('../bin/register-webhook');
 const sandbox = sinon.sandbox.create();
 
 const apiKey = 'api-key';
@@ -22,7 +24,7 @@ tap.beforeEach(done => {
 
 tap.test('webhook registrar', t1 => {
   t1.test('constructor', t2 => {
-    const reg = new registrar(apiKey, apiToken);
+    const reg = new Registrar(apiKey, apiToken);
     t2.equals(typeof reg, 'object', 'returns an object');
     t2.equals(reg.apiKey, apiKey, 'sets the API key');
     t2.equals(reg.apiToken, apiToken, 'sets the API token');
@@ -31,7 +33,7 @@ tap.test('webhook registrar', t1 => {
 
   let reg;
   t1.beforeEach(done => {
-    reg = new registrar(apiKey, apiToken);
+    reg = new Registrar(apiKey, apiToken);
     done();
   });
 
@@ -157,7 +159,7 @@ tap.test('webhook registrar', t1 => {
             t4.pass('resolves');
             t4.equals(del.callCount, 1, 'deletes from Trello');
           })
-          .catch(e => {
+          .catch(() => {
             t4.fail('resolves');
           })
           .then(t4.done);

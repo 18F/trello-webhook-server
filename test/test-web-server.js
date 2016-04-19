@@ -1,3 +1,7 @@
+'use strict';
+
+console.error = () => { }; // eslint-disable-line no-console
+
 const tap = require('tap');
 const http = require('http');
 const sinon = require('sinon');
@@ -41,8 +45,8 @@ tap.test('web server', t1 => {
       .catch(() => {
         t2.fail('resolves');
         t2.done();
-      })
-  })
+      });
+  });
 
   t1.done();
 });

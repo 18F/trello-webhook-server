@@ -1,5 +1,7 @@
 'use strict';
 
+console.error = () => { }; // eslint-disable-line no-console
+
 const tap = require('tap');
 const sinon = require('sinon');
 const mockRequire = require('mock-require');
@@ -29,7 +31,7 @@ const tws = {
   registrar: {
     register: sandbox.spy()
   }
-}
+};
 
 const express = require('../bin/get-express-server-setup');
 
@@ -47,13 +49,13 @@ tap.test('Get Express server setup', t1 => {
     t2.test('HTTP handlers', t3 => {
       t3.equal(getHTTPHandler.callCount, 1, 'gets HTTP handlers');
       t3.equal(tws.config.server.head.callCount, 1, 'sets up an HTTP HEAD handler');
-      t3.equal(tws.config.server.head.args[0][0], `/${hostSubpath}/${modelID}`, 'registers for HEAD on the right path')
+      t3.equal(tws.config.server.head.args[0][0], `/${hostSubpath}/${modelID}`, 'registers for HEAD on the right path');
       t3.equal(typeof tws.config.server.head.args[0][1], 'function', 'HEAD handler is a function');
       t3.equal(tws.config.server.put.callCount, 1, 'sets up an HTTP PUT handler');
-      t3.equal(tws.config.server.put.args[0][0], `/${hostSubpath}/${modelID}`, 'registers for PUT on the right path')
+      t3.equal(tws.config.server.put.args[0][0], `/${hostSubpath}/${modelID}`, 'registers for PUT on the right path');
       t3.equal(typeof tws.config.server.put.args[0][1], 'function', 'PUT handler is a function');
       t3.equal(tws.config.server.post.callCount, 1, 'sets up an HTTP POST handler');
-      t3.equal(tws.config.server.post.args[0][0], `/${hostSubpath}/${modelID}`, 'registers for POST on the right path')
+      t3.equal(tws.config.server.post.args[0][0], `/${hostSubpath}/${modelID}`, 'registers for POST on the right path');
       t3.equal(typeof tws.config.server.post.args[0][1], 'function', 'POST handler is a function');
       t3.done();
     });
@@ -64,7 +66,7 @@ tap.test('Get Express server setup', t1 => {
 
     t2.test('handles incoming express events', t3 => {
       const next = sinon.spy();
-      for(const variant of [{ verb: 'HEAD', fn: headHandler }, { verb: 'PUT', fn: putHandler }, { verb: 'POST', fn: postHandler }]) {
+      for (const variant of [{ verb: 'HEAD', fn: headHandler }, { verb: 'PUT', fn: putHandler }, { verb: 'POST', fn: postHandler }]) {
         t3.test(`handles ${variant.verb}`, t4 => {
           httpHandler.reset();
           next.reset();
@@ -76,7 +78,7 @@ tap.test('Get Express server setup', t1 => {
         });
       }
       t3.done();
-    })
+    });
     t2.done();
   });
 

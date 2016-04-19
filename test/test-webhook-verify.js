@@ -1,14 +1,10 @@
+'use strict';
+
+console.error = () => { }; // eslint-disable-line no-console
+
 const tap = require('tap');
-const crypto = require('crypto');
 const util = require('./util');
 const verify = require('../bin/webhook-verify');
-
-const trelloCallbackURL = 'https://something';
-const trelloClientSecret = 'client-secret-key';
-const trelloData = '{ "some": "data", "value": 3 }';
-const trelloSignature = crypto.createHmac('sha1', trelloClientSecret).update(`${trelloData}${trelloCallbackURL}`).digest('base64');
-
-console.error = () => { };
 
 const values = require('./webhook-verify-fail.json');
 const callbackURL = values.callbackURL[values.callbackURL.length - 1];

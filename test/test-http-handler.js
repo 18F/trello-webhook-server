@@ -1,5 +1,7 @@
 'use strict';
 
+console.error = () => { }; // eslint-disable-line no-console
+
 const tap = require('tap');
 const sinon = require('sinon');
 const mockRequire = require('mock-require');
@@ -23,7 +25,7 @@ const tws = {
 const dataHandler = sandbox.spy();
 const handlers = {
   [modelID]: {
-    data: [ dataHandler ]
+    data: [dataHandler]
   }
 };
 
@@ -36,7 +38,7 @@ tap.beforeEach(done => {
   sandbox.reset();
   response.statusCode = false;
   done();
-})
+});
 
 tap.test('HTTP handler', t1 => {
   const fn = httpHandler(tws, handlers);
@@ -76,18 +78,18 @@ tap.test('HTTP handler', t1 => {
   });
 
   function getHandlers(on) {
-    const handlers = { dataHandler: false, endHandler: false };
-    for(const call of on.args) {
-      if(call[0] === 'data') {
-        handlers.dataHandler = call[1];
-      } else if(call[0] === 'end') {
-        handlers.endHandler = call[1];
+    const hnd = { dataHandler: false, endHandler: false };
+    for (const call of on.args) {
+      if (call[0] === 'data') {
+        hnd.dataHandler = call[1];
+      } else if (call[0] === 'end') {
+        hnd.endHandler = call[1];
       }
     }
-    return handlers;
+    return hnd;
   }
 
-  for(const verb of [ 'POST', 'PUT' ]) {
+  for (const verb of ['POST', 'PUT']) {
     const req = {
       method: verb,
       on: sandbox.spy(),
@@ -97,9 +99,6 @@ tap.test('HTTP handler', t1 => {
     t1.test(`handles ${verb} request`, t2 => {
       fn(req, response);
       t2.equal(req.on.callCount, 2, 'registers two event handlers');
-
-      let dataHandler = false;
-      let endHandler = false;
 
       const reqHandlers = getHandlers(req.on);
 
@@ -133,12 +132,12 @@ tap.test('HTTP handler', t1 => {
 
       t2.test('with valid JSON data', t3 => {
         fn(req, response);
-        const reqHandlers = getHandlers(req.on);
-        reqHandlers.dataHandler('{"key": "value"}');
+        const t2ReqHandlers = getHandlers(req.on);
+        t2ReqHandlers.dataHandler('{"key": "value"}');
 
         t3.test('with Trello webhook verification fail', t4 => {
           trelloVerify.returns(false);
-          reqHandlers.endHandler();
+          t2ReqHandlers.endHandler();
 
           t4.equal(response.statusCode, 400, 'sets the status code to 400');
           t4.equal(response.end.callCount, 1, 'ends the response');
@@ -148,7 +147,7 @@ tap.test('HTTP handler', t1 => {
 
         t3.test('with Trello webhook verification pass', t4 => {
           trelloVerify.returns(true);
-          reqHandlers.endHandler();
+          t2ReqHandlers.endHandler();
 
           t4.equal(handlers[modelID].data[0].callCount, 1, 'defined data handler is called');
           t4.equal(typeof handlers[modelID].data[0].args[0][0], 'object', 'passes an object to the handler');

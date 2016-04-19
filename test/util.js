@@ -1,42 +1,26 @@
 'use strict';
 
-function getRealKeyValue(value) {
-  if(value === 'null') {
-    return null;
-  }
-  if(value === 'true') {
-    return true;
-  }
-  if(value === 'false') {
-    return false;
-  }
-  if(!Number.isNaN(Number(value))) {
-    return Number(value);
-  }
-  return value;
-}
-
 function forEachFail(fails, cb) {
   const keys = Object.keys(fails);
-  const indices = [ ];
+  const indices = [];
   keys.forEach(() => indices.push(0));
 
-  const done = function() {
+  const isDone = function isDone() {
     let done = true;
-    for(let i = 0; i < keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) {
       done = done && (indices[i] === (fails[keys[i]].length - 1));
     }
     return done;
   };
 
-  const increment = function() {
+  const increment = function increment() {
     let index = 0;
-    while(true) {
+    while (true) { // eslint-disable-line no-constant-condition
       indices[index]++;
-      if(indices[index] >= fails[keys[index]].length) {
+      if (indices[index] >= fails[keys[index]].length) {
         indices[index] = 0;
         index++;
-        if(index >= indices.length) {
+        if (index >= indices.length) {
           return false;
         }
       } else {
@@ -45,22 +29,21 @@ function forEachFail(fails, cb) {
     }
   };
 
-  const getArgs = function() {
-    const args = [ ];
-    for(let i = 0; i < keys.length; i++) {
+  const getArgs = function getArgs() {
+    const args = [];
+    for (let i = 0; i < keys.length; i++) {
       args.push(fails[keys[i]][indices[i]]);
     }
     return args;
   };
 
   do {
-    if(!done()) {
+    if (!isDone()) {
       cb(getArgs());
     }
-  } while(increment())
+  } while (increment());
 }
 
 module.exports = {
-  getRealKeyValue,
   forEachFail
 };

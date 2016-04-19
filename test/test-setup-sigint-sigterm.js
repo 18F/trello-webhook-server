@@ -1,5 +1,7 @@
 'use strict';
 
+console.error = () => { }; // eslint-disable-line no-console
+
 const tap = require('tap');
 const sinon = require('sinon');
 require('sinon-as-promised');
@@ -34,18 +36,17 @@ tap.afterEach(done => {
 });
 
 tap.test('SIGINT and SIGTERM handler', t1 => {
-
   sig(registrar);
 
   let sigintHandler;
   let sigtermHandler;
 
   t1.equal(on.callCount, 2, 'process.on called twice');
-  for(const args of on.args) {
-    if(args[0] === 'SIGINT') {
+  for (const args of on.args) {
+    if (args[0] === 'SIGINT') {
       sigintHandler = args[1];
     }
-    if(args[0] === 'SIGTERM') {
+    if (args[0] === 'SIGTERM') {
       sigtermHandler = args[1];
     }
   }
@@ -53,9 +54,9 @@ tap.test('SIGINT and SIGTERM handler', t1 => {
   t1.equal(typeof sigintHandler, 'function', 'registers a SIGINT handler');
   t1.equal(typeof sigtermHandler, 'function', 'registers a SIGTERM handler');
 
-  const checkHandler = function(signal, fn, resolve) {
+  const checkHandler = function checkHandler(signal, fn, resolve) {
     t1.test(`handles ${signal}`, t2 => {
-      if(resolve) {
+      if (resolve) {
         registrar.unregister = sandbox.stub().resolves();
       } else {
         registrar.unregister = sandbox.stub().rejects();

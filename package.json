@@ -19,7 +19,7 @@
   "scripts": {
     "build": "mkdir -p bin && babel --presets es2015 -d bin src",
     "test": "npm run lint && tap -Rspec --cov test/test-*.js",
-    "lint": "eslint --fix src/**/*.js"
+    "lint": "eslint --fix test/**/*.js src/**/*.js"
   },
   "engines": {
     "node": ">=5.8.0 <5.9.0",

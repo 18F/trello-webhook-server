@@ -1,5 +1,7 @@
 'use strict';
 
+console.error = () => { }; // eslint-disable-line no-console
+
 const tap = require('tap');
 const sinon = require('sinon');
 const http = require('http');
@@ -30,7 +32,7 @@ const tws = {
   registrar: {
     register: sandbox.spy()
   }
-}
+};
 
 const express = require('../bin/get-own-server-setup');
 

@@ -1,9 +1,10 @@
 'use strict';
 
+console.error = () => { }; // eslint-disable-line no-console
+
 const tap = require('tap');
 const sinon = require('sinon');
 const mockRequire = require('mock-require');
-const request = require('request');
 const util = require('./util');
 const sandbox = sinon.sandbox.create();
 
@@ -23,14 +24,11 @@ const apiKey = values.key[values.key.length - 1];
 const apiToken = values.token[values.token.length - 1];
 const apiSecret = values.secret[values.secret.length - 1];
 
-console.error = () => { };
-
-function getConfig(port, hostURL, apiKey, apiToken, clientSecret) {
-  return { port, hostURL, apiKey, apiToken, clientSecret };
+function getConfig(portArg, hostURLArg, apiKeyArg, apiTokenArg, clientSecretArg) {
+  return { port: portArg, hostURL: hostURLArg, apiKey: apiKeyArg, apiToken: apiTokenArg, clientSecret: clientSecretArg };
 }
 
 tap.test('Webhook server class', t1 => {
-
   t1.test('constructor', t2 => {
     let whs;
 
@@ -41,7 +39,7 @@ tap.test('Webhook server class', t1 => {
     });
 
     function wrapper(config) {
-      return function() {
+      return function wrapperBody() {
         whs = new WebhookServer(config);
       };
     }
@@ -130,7 +128,7 @@ tap.test('Webhook server class', t1 => {
       const handler = () => { };
       whs.config.modelID = modelID;
       t3.doesNotThrow(() => whs.on(eventName, handler), 'does not throw an exception');
-      //t3.equals(typeof whs.handlers)
+      // t3.equals(typeof whs.handlers)
       t3.done();
     });
     t2.done();
