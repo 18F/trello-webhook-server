@@ -10,7 +10,7 @@ class TrelloWebhookServer {
     }
     this.config = { };
     if (config.server) {
-      if (config.server.constructor.name === 'Server') {
+      if (config.server.constructor && config.server.constructor.name === 'Server') {
         if (config.server.use) {
           this.config.server = config.server;
           this.start = require('./get-express-server-setup')(this, handlers);
