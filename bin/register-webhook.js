@@ -42,7 +42,7 @@ var WebhookRegistrar = function () {
             }
           });
         } else {
-          resolve();
+          resolve(_this.webhookID);
         }
       });
     }
