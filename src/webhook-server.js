@@ -30,7 +30,7 @@ class TrelloWebhookServer {
       }
       this.config.port = numPort;
     }
-    this.start = require(serverSetupModule)(this, handlers);
+    this.start = require(serverSetupModule)(this, handlers); // eslint-disable-line global-require
 
     if (!config.hostURL || !config.hostURL.match(/^https?:\/\//)) {
       throw new Error('Host URL (config.hostURL) must be specified and must begin with http:// or https://');

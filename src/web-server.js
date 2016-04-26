@@ -5,9 +5,9 @@ let server = null;
 
 class HTTPServer {
   constructor(port, handler) {
-    this._port = port;
-    this._server = http.createServer(handler);
-    this._server.listen(port, '0.0.0.0');
+    this.port = port;
+    this.server = http.createServer(handler);
+    this.server.listen(port, '0.0.0.0');
   }
 }
 

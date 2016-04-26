@@ -8,7 +8,7 @@ const fs = require('fs');
 const files = fs.readdirSync('./bin');
 for (const file of files) {
   if (file.substr(-3, 3) === '.js') {
-    require(`../bin/${file}`);
+    require(`../bin/${file}`); // eslint-disable-line global-require
   }
 }
 

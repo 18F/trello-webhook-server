@@ -7,9 +7,9 @@ const sinon = require('sinon');
 require('sinon-as-promised');
 const sig = require('../bin/setup-sigint-sigterm');
 
-const __on = process.on;
-const __removeListener = process.removeListener;
-const __kill = process.kill;
+const realOn = process.on;
+const realRemoveListener = process.removeListener;
+const realKill = process.kill;
 
 const sandbox = sinon.sandbox.create();
 const on = sandbox.spy();
@@ -29,9 +29,9 @@ tap.beforeEach(done => {
 });
 
 tap.afterEach(done => {
-  Object.defineProperty(process, 'kill', { value: __kill, configurable: true });
-  Object.defineProperty(process, 'removeListener', { value: __removeListener, configurable: true });
-  Object.defineProperty(process, 'on', { value: __on, configurable: true });
+  Object.defineProperty(process, 'kill', { value: realKill, configurable: true });
+  Object.defineProperty(process, 'removeListener', { value: realRemoveListener, configurable: true });
+  Object.defineProperty(process, 'on', { value: realOn, configurable: true });
   done();
 });
 
