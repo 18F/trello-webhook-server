@@ -25,7 +25,11 @@ class WebhookRegistrar {
           if (err) {
             reject(err);
           } else if (typeof body === 'string') {
-            reject(body);
+            if (body === 'A webhook with that callback, model, and token already exists') {
+              resolve('Unknown Webhook ID - recovering previous session');
+            } else {
+              reject(body);
+            }
           } else {
             this.webhookID = body.id;
             resolve(body.id);
