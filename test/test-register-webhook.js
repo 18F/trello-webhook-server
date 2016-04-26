@@ -55,18 +55,37 @@ tap.test('webhook registrar', t1 => {
       });
 
       t3.test('with a returned error string', t4 => {
-        const errString = 'Error string';
-        post.yields(null, null, errString);
-        reg.register(callbackURL, modelID)
-          .then(() => {
-            t4.fail('rejects');
-          })
-          .catch(e => {
-            t4.pass('rejects');
-            t4.equals(post.callCount, 1, 'posts to Trello');
-            t4.equals(e, errString, 'passes error');
-          })
-          .then(t4.done);
+        t4.test('unknown error string', t5 => {
+          const errString = 'Error string';
+          post.yields(null, null, errString);
+          reg.register(callbackURL, modelID)
+            .then(() => {
+              t5.fail('rejects');
+            })
+            .catch(e => {
+              t5.pass('rejects');
+              t5.equals(post.callCount, 1, 'posts to Trello');
+              t5.equals(e, errString, 'passes error');
+            })
+            .then(t5.done);
+        });
+
+        t4.test('with error indicating webhook already exists', t5 => {
+          const errString = 'A webhook with that callback, model, and token already exists';
+          post.yields(null, null, errString);
+          reg.register(callbackURL, modelID)
+            .then(id => {
+              t5.pass('resolves');
+              t5.equals(post.callCount, 1, 'posts to Trello');
+              t5.ok(id.startsWith('Unknown Webhook ID'), 'sends a notice that the webhook ID is unknown');
+            })
+            .catch(() => {
+              t5.fail('rejects');
+            })
+            .then(t5.done);
+        });
+
+        t4.done();
       });
 
       t3.test('with a returned webhook object', t4 => {
