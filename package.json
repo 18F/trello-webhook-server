@@ -22,7 +22,7 @@
     "lint": "eslint --fix test/**/*.js src/**/*.js"
   },
   "engines": {
-    "node": ">=5.8.0 <5.9.0",
+    "node": ">=5.8.0",
     "npm": ">=3.8.0 <3.9.0"
   },
   "devDependencies": {
