@@ -33,8 +33,8 @@ port         | The port that the webhook server will listen on.  **REQUIRED** if
 server       | An `http.Server` or Express/restify server to attach to.  Must be an `http.Server` or Express/restify server object.
 hostURL      | **REQUIRED** The URL that will eventually reach the webhook server.  This should be a full HTTP URL that is reachable by Trello.  E.g., https://asdf.localtunnel.me.  If attaching to an existing `http.Server` or Express/restify server, the webhook server will _only_ listen to its assigned path - that is, if you specify `https://asdf.localtunnel.me/trello-webhook`, this module will only listen to events at that path.
 apiKey       | **REQUIRED**  Obtained from [Trello](https://trello.com/app-key). Located near the top of that page.
-apiToken     | **REQUIRED** Obtained from [Trello](https://trello.com/app-key). Located near the bottom of that page.
-clientSecret | **REQUIRED** Obtained from [Trello](https://trello.com/app-key). There's a link to generate the key at the end of the first paragraph headed "Token."  This is used to verify that webhook requests are actually from Trello (see the "Webhook Signatures" section on the [Trello webhook API documentation](https://developers.trello.com/apis/webhooks)).
+apiToken     | **REQUIRED** Obtained from [Trello](https://trello.com/app-key). There's a link to generate the key at the end of the first paragraph headed "Token."
+clientSecret | **REQUIRED** Obtained from [Trello](https://trello.com/app-key). OAuth client secret, located near the bottom of that page under the *OAuth* header. This is used to verify that webhook requests are actually from Trello (see the "Webhook Signatures" section on the [Trello webhook API documentation](https://developers.trello.com/apis/webhooks)).
 
 Any invalid config parameters will throw an exception.
 
